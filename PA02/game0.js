@@ -19,6 +19,8 @@ The user moves a cube around the board trying to knock balls into a cone
 
 	var endScene, endCamera, endText;
 
+	var loseScene, startScene;
+
 
 
 
@@ -26,11 +28,11 @@ The user moves a cube around the board trying to knock balls into a cone
 	var controls =
 	     {fwd:false, bwd:false, left:false, right:false,
 				speed:10, fly:false, reset:false, rleft:false,
-				rright:false,
+				rright:false, start:false, hit:false, npc:false,
 		    camera:camera}
 
 	var gameState =
-	     {score:0, health:10, scene:'main', camera:'none' }
+	     {score:0, health:10, scene:'start', camera:'none' }
 
 
 	// Here is the main game control
@@ -39,11 +41,38 @@ The user moves a cube around the board trying to knock balls into a cone
 	animate();  // start the animation loop!
 
 
+	function createStartScene(){
+		startScene = initScene();
+		endText = createSkyBox('wood.jpg',10);
 
+		//endText.rotateX(Math.PI);
+		startScene.add(endText);
+		var light1 = createPointLight();
+		light1.position.set(0,200,20);
+		startScene.add(light1);
+		endCamera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 0.1, 1000 );
+		endCamera.position.set(0,50,1);
+		endCamera.lookAt(0,0,0);
 
+	}
+	function createLoseScene(){
+		loseScene = initScene();
+		endText = createSkyBox('rocks.jpg',10);
+
+		//endText.rotateX(Math.PI);
+		loseScene.add(endText);
+		var light1 = createPointLight();
+		light1.position.set(0,200,20);
+		loseScene.add(light1);
+		endCamera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 0.1, 1000 );
+		endCamera.position.set(0,50,1);
+		endCamera.lookAt(0,0,0);
+
+	}
 	function createEndScene(){
 		endScene = initScene();
 		endText = createSkyBox('youwon.png',10);
+
 		//endText.rotateX(Math.PI);
 		endScene.add(endText);
 		var light1 = createPointLight();
@@ -62,6 +91,8 @@ The user moves a cube around the board trying to knock balls into a cone
       initPhysijs();
 			scene = initScene();
 			createEndScene();
+			createLoseScene();
+			createStartScene();
 			initRenderer();
 			createMainScene();
 	}
@@ -134,7 +165,7 @@ The user moves a cube around the board trying to knock balls into a cone
 						console.log("ball "+i+" hit the cone");
 						soundEffect('good.wav');
 						gameState.score += 1;  // add one to the score
-						if (gameState.score==numBalls) {
+						if (gameState.score == numBalls) {
 							gameState.scene='youwon';
 						}
             //scene.remove(ball);  // this isn't working ...
@@ -370,6 +401,13 @@ The user moves a cube around the board trying to knock balls into a cone
 			addBalls();
 			return;
 		}
+		if (gameState.scene == 'youlose' && event.key=='r') {
+			gameState.scene = 'main';
+			scene = initScene();
+			createMainScene();
+			gameState.health = 11;
+			return;
+		}
 
 		// this is the regular scene
 		switch (event.key){
@@ -388,6 +426,8 @@ The user moves a cube around the board trying to knock balls into a cone
 
 			case "q": controls.rleft = true; break;
 			case "e": controls.rright = true; break;
+
+			case "p": controls.start = true; break;
 
 
 			// switch cameras
@@ -426,9 +466,35 @@ The user moves a cube around the board trying to knock balls into a cone
 	function updateNPC(){
 		npc.lookAt(avatar.position);
 	  //npc.__dirtyPosition = true;
+
+		npc.addEventListener( 'collision',
+			function( other_object, relative_velocity, relative_rotation, contact_normal ) {
+				if (other_object == avatar){
+					controls.hit = true;  // add one to the score
+					if (gameState.health == 1) {
+						gameState.scene='youlose';
+						gameState.health--;
+					}
+					//scene.remove(ball);  // this isn't working ...
+					// make the ball drop below the scene ..
+					// threejs doesn't let us remove it from the schene...
+					controls.npc = true;
+					this.setLinearVelocity(0);
+
+
+				}
+			}
+		)
+
 		var dis = Math.sqrt(Math.pow((avatar.position.x - npc.position.x),2) + Math.pow((avatar.position.y - npc.position.y),2) + Math.pow((avatar.position.z - npc.position.z),2));
 		if (dis <= 20) {
-			npc.setLinearVelocity(npc.getWorldDirection().multiplyScalar(1));
+			npc.setLinearVelocity(npc.getWorldDirection().multiplyScalar(10));
+		}
+		if (controls.npc) {
+			controls.npc = false;
+			npc.__dirtyPosition = true;
+      npc.position.set(randN(30),5,randN(30));
+			npc.setLinearVelocity(npc.getWorldDirection().multiplyScalar(0));
 		}
 
 	}
@@ -465,6 +531,11 @@ The user moves a cube around the board trying to knock balls into a cone
 			avatarCam.rotateY(-0.01);
 		}
 
+		if (controls.hit) {
+			gameState.health--;
+			controls.hit = false;
+		}
+
     if (controls.reset){
       avatar.__dirtyPosition = true;
       avatar.position.set(40,10,40);
@@ -480,9 +551,18 @@ The user moves a cube around the board trying to knock balls into a cone
 
 		switch(gameState.scene) {
 
+			case "start":
+				renderer.render(startScene, endCamera);
+				if (controls.start) gameState.scene = 'main';
+				break;
+
 			case "youwon":
 				//endText.rotateY(0.005);
 				renderer.render( endScene, endCamera );
+				break;
+
+			case "youlose":
+				renderer.render( loseScene, endCamera );
 				break;
 
 			case "main":
