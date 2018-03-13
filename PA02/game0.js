@@ -124,11 +124,12 @@ The user moves a cube around the board trying to knock balls into a cone
 			avatar = createAvatar();
 			gameState.camera = avatarCam;
 
-      edgeCam = new THREE.PerspectiveCamera( 120, window.innerWidth / window.innerHeight, 0.1, 1000 );
-      edgeCam.position.set(20,20,10);
+      		edgeCam = new THREE.PerspectiveCamera( 120, window.innerWidth / window.innerHeight, 0.1, 1000 );
+      		edgeCam.position.set(20,20,10);
 
 
 			addBalls();
+			addHealthBalls();
 
 			cone = createConeMesh(4,6);
 			cone.position.set(10,3,7);
@@ -174,11 +175,33 @@ The user moves a cube around the board trying to knock balls into a cone
 						this.position.y = this.position.y - 100;
 						this.__dirtyPosition = true;
 					}
-          else if (other_object == avatar){
-            gameState.health ++;
-          }
 				}
 			)
+		}
+	}
+
+	function addHealthBalls(){
+		//creates spheres that increase health of avatar when they collide with avatar
+		var numBalls = 2;
+
+
+		for(i=0;i<numBalls;i++){
+			var ball = createHealthBall();
+			ball.position.set(randN(20)+15,30,randN(20)+15);
+			scene.add(ball);
+
+			ball.addEventListener( 'collision',
+				function( other_object, relative_velocity, relative_rotation, contact_normal ) {
+					if (other_object==avatar){
+						console.log("avatar hit health ball (+1 health!)");
+						soundEffect('good.wav');
+						gameState.health += 1;  // add one to the score
+						//drop below scene
+						this.position.y = this.position.y - 100;
+						this.__dirtyPosition = true;
+					}
+				}
+			)	
 		}
 	}
 
@@ -368,7 +391,18 @@ The user moves a cube around the board trying to knock balls into a cone
 		var geometry = new THREE.SphereGeometry( 1, 16, 16);
 		var material = new THREE.MeshLambertMaterial( { color: 0xffff00} );
 		var pmaterial = new Physijs.createMaterial(material,0.9,0.95);
-    var mesh = new Physijs.BoxMesh( geometry, pmaterial );
+    	var mesh = new Physijs.BoxMesh( geometry, pmaterial );
+		mesh.setDamping(0.1,0.1);
+		mesh.castShadow = true;
+		return mesh;
+	}
+
+	function createHealthBall(){
+		//var geometry = new THREE.SphereGeometry( 4, 20, 20);
+		var geometry = new THREE.SphereGeometry( 1, 16, 16);
+		var material = new THREE.MeshLambertMaterial( { color: 0x00FF00} );
+		var pmaterial = new Physijs.createMaterial(material,0.9,0.95);
+    	var mesh = new Physijs.BoxMesh( geometry, material );
 		mesh.setDamping(0.1,0.1);
 		mesh.castShadow = true;
 		return mesh;
@@ -399,6 +433,7 @@ The user moves a cube around the board trying to knock balls into a cone
 			gameState.scene = 'main';
 			gameState.score = 0;
 			addBalls();
+			addHealthBalls();
 			return;
 		}
 		if (gameState.scene == 'youlose' && event.key=='r') {
