@@ -10,7 +10,7 @@ The user moves a cube around the board trying to knock balls into a cone
 	// First we declare the variables that hold the objects we need
 	// in the animation code
 	var scene, renderer;  // all threejs programs need these
-	var camera, avatarCam, edgeCam;  // we have two cameras in the main scene
+	var camera, avatarCam, edgeCam, upperCam;  // we have two cameras in the main scene
 	var avatar;
 	// here are some mesh objects ...
 
@@ -121,6 +121,7 @@ The user moves a cube around the board trying to knock balls into a cone
 
 			// create the avatar
 			avatarCam = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 1000 );
+			upperCam = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 0.1, 1000 );
 			avatar = createAvatar();
 			gameState.camera = avatarCam;
 
@@ -201,7 +202,7 @@ The user moves a cube around the board trying to knock balls into a cone
 						this.__dirtyPosition = true;
 					}
 				}
-			)	
+			)
 		}
 	}
 
@@ -358,7 +359,11 @@ The user moves a cube around the board trying to knock balls into a cone
 
 						avatarCam.position.set(0,4,0);
 						avatarCam.lookAt(0,4,10);
+						upperCam.position.set(0,6,-6);
+						upperCam.lookAt(0,4,16);
 						avatar.add(avatarCam);
+						avatar.add(upperCam);
+
 						avatar.translateY(10);
 
 						avatarCam.translateY(-4);
@@ -469,6 +474,7 @@ The user moves a cube around the board trying to knock balls into a cone
 			case "1": gameState.camera = camera; break;
 			case "2": gameState.camera = avatarCam; break;
       case "3": gameState.camera = edgeCam; break;
+			case "4": gameState.camera = upperCam; break;
 
 			// move the camera around, relative to the avatar
 			case "ArrowLeft": avatarCam.translateY(1);break;
