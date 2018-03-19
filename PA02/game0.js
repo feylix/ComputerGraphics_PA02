@@ -27,6 +27,7 @@ BUGS:
 
 	// here are some mesh objects ...
 	var cone;
+	var torus;
 	var npc;
 
 	var endScene, endCamera, endText;
@@ -133,6 +134,16 @@ BUGS:
 			cone = createConeMesh(4,6);
 			cone.position.set(10,3,7);
 			scene.add(cone);
+
+			torus = createTorus();
+			torus.position.set(0,0,0);
+			torus.rotation.set(135,0,0);
+			scene.add(torus);
+
+			torus = createTorus();
+			torus.position.set(0,0,0);
+			torus.rotation.set(0,45,0);
+			scene.add(torus);
 
 			npc = createBoxMesh2(0x0000ff,1,2,4);
 			npc.position.set(30,5,-30);
@@ -365,6 +376,15 @@ BUGS:
 		var material = new THREE.MeshLambertMaterial( { color: 0xffffff,  map: texture ,side:THREE.DoubleSide} );
 		var pmaterial = new Physijs.createMaterial(material,0.9,0.5);
 		var mesh = new Physijs.ConeMesh( geometry, pmaterial, 0 );
+		mesh.castShadow = true;
+		return mesh;
+	}
+
+	function createTorus(){
+		var geometry = new THREE.TorusGeometry( 75, 3, 16, 100 );
+		var material = new THREE.MeshLambertMaterial( { color: 0xffff00 } );
+		var pmaterial = new Physijs.createMaterial(material,0.9,0.95);
+		var mesh = new Physijs.Mesh( geometry, pmaterial, 0 );
 		mesh.castShadow = true;
 		return mesh;
 	}
