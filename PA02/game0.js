@@ -2,7 +2,6 @@
 Team: This Variable is yet to be Declared
 Members: Daniel Johnston, Benedikt Reynolds, Rebecca Panitch,
 		Marcus Lee, Eva Luo, Zepeng Hu
-
 PA02: Work with your team to modify the game0 demo from class and
 		make the following changes:
 				- Add key controls "Q" and "E" to rotate the avatar camera view to the
@@ -18,24 +17,20 @@ PA02: Work with your team to modify the game0 demo from class and
 					key
 				- Each member of the team should also add at least one additional feature
 					to the game
-
 BUGS:
 
 */
 
 	var scene, renderer;  // all threejs programs need these
-<<<<<<< HEAD
 	var camera, avatarCam, edgeCam, upperCam;  // we have two cameras in the main scene
-	var endScene, endCamera, endText;
-	var loseScene, startScene;
-=======
-	var camera, avatarCam, edgeCam;  // we have two cameras in the main scene
->>>>>>> parent of 500dec5... Added featrue of key "4" to change upper angel camera
 	var avatar;
 
 	// here are some mesh objects ...
 	var cone;
 	var npc;
+
+	var endScene, endCamera, endText;
+	var loseScene, startScene;
 
 	var controls =
 	     {fwd:false, bwd:false, left:false, right:false,
@@ -49,11 +44,11 @@ BUGS:
 	// Here is the main game control
   init(); //
 	initControls();
-	animate();
+	animate();  // start the animation loop!
 
 	function createStartScene() {
 		startScene = initScene();
-		endText = createSkyBox('wood.jpg', 10);
+		endText = createSkyBox('wood.jpg',10);
 
 		//endText.rotateX(Math.PI);
 		startScene.add(endText);
@@ -93,7 +88,7 @@ BUGS:
 		endCamera.lookAt(0,0,0);
 	}
 
-	//initialize each of the scenes components
+	//To initialize the scene, we initialize each of its component
 	function init() {
       initPhysijs();
 			scene = initScene();
@@ -125,11 +120,12 @@ BUGS:
 
 			// create the avatar
 			avatarCam = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 1000 );
+			upperCam = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 0.1, 1000 );
 			avatar = createAvatar();
 			gameState.camera = avatarCam;
 
-      edgeCam = new THREE.PerspectiveCamera( 120, window.innerWidth / window.innerHeight, 0.1, 1000 );
-      edgeCam.position.set(20,20,10);
+      		edgeCam = new THREE.PerspectiveCamera( 120, window.innerWidth / window.innerHeight, 0.1, 1000 );
+      		edgeCam.position.set(20,20,10);
 
 			addBalls();
 			addHealthBalls();
@@ -197,7 +193,7 @@ BUGS:
 						this.__dirtyPosition = true;
 					}
 				}
-			)	
+			)
 		}
 	}
 
@@ -237,6 +233,8 @@ BUGS:
 		});
 	}
 
+	/* We don't do much here, but we could do more!
+	*/
 	function initScene() {
 		//scene = new THREE.Scene();
     var scene = new Physijs.Scene();
@@ -247,7 +245,6 @@ BUGS:
     Physijs.scripts.worker = '/js/physijs_worker.js';
     Physijs.scripts.ammo = '/js/ammo.js';
   }
-
 	/*
 		The renderer needs a size and the actual canvas we draw on
 		needs to be added to the body of the webpage. We also specify
@@ -282,7 +279,7 @@ BUGS:
 		return mesh;
 	}
 
-	function createBoxMesh2(color,w,h,d) {
+	function createBoxMesh2(color,w,h,d){
 		var geometry = new THREE.BoxGeometry( w, h, d);
 		var material = new THREE.MeshLambertMaterial( { color: color} );
 		mesh = new Physijs.BoxMesh( geometry, material );
@@ -341,7 +338,11 @@ BUGS:
 
 						avatarCam.position.set(0,4,0);
 						avatarCam.lookAt(0,4,10);
+						upperCam.position.set(0,6,-6);
+						upperCam.lookAt(0,4,16);
 						avatar.add(avatarCam);
+						avatar.add(upperCam);
+
 						avatar.translateY(10);
 
 						avatarCam.translateY(-4);
@@ -355,7 +356,7 @@ BUGS:
 				)
 	}
 
-	function createConeMesh(r,h)
+	function createConeMesh(r,h) {
 		var geometry = new THREE.ConeGeometry( r, h, 32);
 		var texture = new THREE.TextureLoader().load( '../images/tile.jpg' );
 		texture.wrapS = THREE.RepeatWrapping;
@@ -422,7 +423,7 @@ BUGS:
 		}
 
 		// this is the regular scene
-		switch (event.key){
+		switch (event.key) {
 			// change the way the avatar is moving
 			case "w": controls.fwd = true;  break;
 			case "s": controls.bwd = true; break;
@@ -446,6 +447,7 @@ BUGS:
 			case "1": gameState.camera = camera; break;
 			case "2": gameState.camera = avatarCam; break;
       case "3": gameState.camera = edgeCam; break;
+			case "4": gameState.camera = upperCam; break;
 
 			// move the camera around, relative to the avatar
 			case "ArrowLeft": avatarCam.translateY(1);break;
@@ -458,7 +460,7 @@ BUGS:
 	function keyup(event) {
 		//console.log("Keydown:"+event.key);
 		//console.dir(event);
-		switch (event.key){
+		switch (event.key) {
 			case "w": controls.fwd   = false;  break;
 			case "s": controls.bwd   = false; break;
 			case "a": controls.left  = false; break;
@@ -576,6 +578,7 @@ BUGS:
 					renderer.render( scene, gameState.camera );
 				}
 				break;
+
 			default:
 			  console.log("don't know the scene "+gameState.scene);
 		}
