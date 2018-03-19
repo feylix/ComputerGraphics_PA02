@@ -1,29 +1,37 @@
-
 /*
-Game 0
-This is a ThreeJS program which implements a simple game
-The user moves a cube around the board trying to knock balls into a cone
+Team: This Variable is yet to be Declared
+Members: Daniel Johnston, Benedikt Reynolds, Rebecca Panitch,
+		Marcus Lee, Eva Luo, Zepeng Hu
+
+PA02: Work with your team to modify the game0 demo from class and
+		make the following changes:
+				- Add key controls "Q" and "E" to rotate the avatar camera view to the
+					left and right, respectively
+				-	Replace the box avatar with a Monkey avatar
+				- Create a NonPlayableCharacter which moves toward the avatar if
+					the avatar gets too close
+				- When the NPC hits the Avatar, the avatar should lose a point of health
+					and the NPC should be teleported to a random positiion on the board
+				- When the Avatar reaches zero health, the game should go to a "you lose"
+					scene, which the player can restart with the "R" key
+				- Add a start screen, where the user can initatie play by hitting the "P"
+					key
+				- Each member of the team should also add at least one additional feature
+					to the game
+
+BUGS:
 
 */
 
-
-	// First we declare the variables that hold the objects we need
-	// in the animation code
 	var scene, renderer;  // all threejs programs need these
 	var camera, avatarCam, edgeCam, upperCam;  // we have two cameras in the main scene
+	var endScene, endCamera, endText;
+	var loseScene, startScene;
 	var avatar;
-	// here are some mesh objects ...
 
+	// here are some mesh objects ...
 	var cone;
 	var npc;
-
-	var endScene, endCamera, endText;
-
-	var loseScene, startScene;
-
-
-
-
 
 	var controls =
 	     {fwd:false, bwd:false, left:false, right:false,
@@ -34,16 +42,14 @@ The user moves a cube around the board trying to knock balls into a cone
 	var gameState =
 	     {score:0, health:10, scene:'start', camera:'none' }
 
-
 	// Here is the main game control
   init(); //
 	initControls();
-	animate();  // start the animation loop!
+	animate();
 
-
-	function createStartScene(){
+	function createStartScene() {
 		startScene = initScene();
-		endText = createSkyBox('wood.jpg',10);
+		endText = createSkyBox('wood.jpg', 10);
 
 		//endText.rotateX(Math.PI);
 		startScene.add(endText);
@@ -53,9 +59,9 @@ The user moves a cube around the board trying to knock balls into a cone
 		endCamera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 0.1, 1000 );
 		endCamera.position.set(0,50,1);
 		endCamera.lookAt(0,0,0);
-
 	}
-	function createLoseScene(){
+
+	function createLoseScene() {
 		loseScene = initScene();
 		endText = createSkyBox('rocks.jpg',10);
 
@@ -67,9 +73,9 @@ The user moves a cube around the board trying to knock balls into a cone
 		endCamera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 0.1, 1000 );
 		endCamera.position.set(0,50,1);
 		endCamera.lookAt(0,0,0);
-
 	}
-	function createEndScene(){
+
+	function createEndScene() {
 		endScene = initScene();
 		endText = createSkyBox('youwon.png',10);
 
@@ -81,13 +87,10 @@ The user moves a cube around the board trying to knock balls into a cone
 		endCamera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 0.1, 1000 );
 		endCamera.position.set(0,50,1);
 		endCamera.lookAt(0,0,0);
-
 	}
 
-	/**
-	  To initialize the scene, we initialize each of its components
-	*/
-	function init(){
+	//initialize each of the scenes components
+	function init() {
       initPhysijs();
 			scene = initScene();
 			createEndScene();
@@ -97,8 +100,7 @@ The user moves a cube around the board trying to knock balls into a cone
 			createMainScene();
 	}
 
-
-	function createMainScene(){
+	function createMainScene() {
       // setup lighting
 			var light1 = createPointLight();
 			light1.position.set(0,200,20);
@@ -110,8 +112,6 @@ The user moves a cube around the board trying to knock balls into a cone
 			camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 0.1, 1000 );
 			camera.position.set(0,50,0);
 			camera.lookAt(0,0,0);
-
-
 
 			// create the ground and the skybox
 			var ground = createGround('grass.png');
@@ -125,9 +125,8 @@ The user moves a cube around the board trying to knock balls into a cone
 			avatar = createAvatar();
 			gameState.camera = avatarCam;
 
-      		edgeCam = new THREE.PerspectiveCamera( 120, window.innerWidth / window.innerHeight, 0.1, 1000 );
-      		edgeCam.position.set(20,20,10);
-
+      edgeCam = new THREE.PerspectiveCamera( 120, window.innerWidth / window.innerHeight, 0.1, 1000 );
+      edgeCam.position.set(20,20,10);
 
 			addBalls();
 			addHealthBalls();
@@ -141,22 +140,16 @@ The user moves a cube around the board trying to knock balls into a cone
 			scene.add(npc);
 			//console.dir(npc);
 			//playGameMusic();
-
 	}
 
-
-	function randN(n){
+	function randN(n) {
 		return Math.random()*n;
 	}
 
-
-
-
-	function addBalls(){
+	function addBalls() {
 		var numBalls = 20;
 
-
-		for(i=0;i<numBalls;i++){
+		for(i=0;i<numBalls;i++) {
 			var ball = createBall();
 			ball.position.set(randN(20)+15,30,randN(20)+15);
 			scene.add(ball);
@@ -181,12 +174,11 @@ The user moves a cube around the board trying to knock balls into a cone
 		}
 	}
 
-	function addHealthBalls(){
+	function addHealthBalls() {
 		//creates spheres that increase health of avatar when they collide with avatar
 		var numBalls = 2;
 
-
-		for(i=0;i<numBalls;i++){
+		for(i=0;i<numBalls;i++) {
 			var ball = createHealthBall();
 			ball.position.set(randN(20)+15,30,randN(20)+15);
 			scene.add(ball);
@@ -206,9 +198,7 @@ The user moves a cube around the board trying to knock balls into a cone
 		}
 	}
 
-
-
-	function playGameMusic(){
+	function playGameMusic() {
 		// create an AudioListener and add it to the camera
 		var listener = new THREE.AudioListener();
 		camera.add( listener );
@@ -226,7 +216,7 @@ The user moves a cube around the board trying to knock balls into a cone
 		});
 	}
 
-	function soundEffect(file){
+	function soundEffect(file) {
 		// create an AudioListener and add it to the camera
 		var listener = new THREE.AudioListener();
 		camera.add( listener );
@@ -244,24 +234,23 @@ The user moves a cube around the board trying to knock balls into a cone
 		});
 	}
 
-	/* We don't do much here, but we could do more!
-	*/
-	function initScene(){
+	function initScene() {
 		//scene = new THREE.Scene();
     var scene = new Physijs.Scene();
 		return scene;
 	}
 
-  function initPhysijs(){
+  function initPhysijs() {
     Physijs.scripts.worker = '/js/physijs_worker.js';
     Physijs.scripts.ammo = '/js/ammo.js';
   }
+
 	/*
 		The renderer needs a size and the actual canvas we draw on
 		needs to be added to the body of the webpage. We also specify
 		that the renderer will be computing soft shadows
 	*/
-	function initRenderer(){
+	function initRenderer() {
 		renderer = new THREE.WebGLRenderer();
 		renderer.setSize( window.innerWidth, window.innerHeight-50 );
 		document.body.appendChild( renderer.domElement );
@@ -269,8 +258,7 @@ The user moves a cube around the board trying to knock balls into a cone
 		renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 	}
 
-
-	function createPointLight(){
+	function createPointLight() {
 		var light;
 		light = new THREE.PointLight( 0xffffff);
 		light.castShadow = true;
@@ -282,9 +270,7 @@ The user moves a cube around the board trying to knock balls into a cone
 		return light;
 	}
 
-
-
-	function createBoxMesh(color){
+	function createBoxMesh(color) {
 		var geometry = new THREE.BoxGeometry( 1, 1, 1);
 		var material = new THREE.MeshLambertMaterial( { color: color} );
 		mesh = new Physijs.BoxMesh( geometry, material );
@@ -293,7 +279,7 @@ The user moves a cube around the board trying to knock balls into a cone
 		return mesh;
 	}
 
-	function createBoxMesh2(color,w,h,d){
+	function createBoxMesh2(color,w,h,d) {
 		var geometry = new THREE.BoxGeometry( w, h, d);
 		var material = new THREE.MeshLambertMaterial( { color: color} );
 		mesh = new Physijs.BoxMesh( geometry, material );
@@ -302,9 +288,7 @@ The user moves a cube around the board trying to knock balls into a cone
 		return mesh;
 	}
 
-
-
-	function createGround(image){
+	function createGround(image) {
 		// creating a textured plane which receives shadows
 		var geometry = new THREE.PlaneGeometry( 180, 180, 128 );
 		var texture = new THREE.TextureLoader().load( '../images/'+image );
@@ -323,9 +307,7 @@ The user moves a cube around the board trying to knock balls into a cone
 		// we need to rotate the mesh 90 degrees to make it horizontal not vertical
 	}
 
-
-
-	function createSkyBox(image,k){
+	function createSkyBox(image,k) {
 		// creating a textured plane which receives shadows
 		var geometry = new THREE.SphereGeometry( 80, 80, 80 );
 		var texture = new THREE.TextureLoader().load( '../images/'+image );
@@ -339,14 +321,11 @@ The user moves a cube around the board trying to knock balls into a cone
 
 		mesh.receiveShadow = false;
 
-
 		return mesh
 		// we need to rotate the mesh 90 degrees to make it horizontal not vertical
-
-
 	}
 
-	function createAvatar(){
+	function createAvatar() {
 		var loader = new THREE.JSONLoader();
 		loader.load("../models/suzanne.json",
 					function ( geometry, materials ) {
@@ -377,7 +356,7 @@ The user moves a cube around the board trying to knock balls into a cone
 				)
 	}
 
-	function createConeMesh(r,h){
+	function createConeMesh(r,h)
 		var geometry = new THREE.ConeGeometry( r, h, 32);
 		var texture = new THREE.TextureLoader().load( '../images/tile.jpg' );
 		texture.wrapS = THREE.RepeatWrapping;
@@ -390,8 +369,7 @@ The user moves a cube around the board trying to knock balls into a cone
 		return mesh;
 	}
 
-
-	function createBall(){
+	function createBall() {
 		//var geometry = new THREE.SphereGeometry( 4, 20, 20);
 		var geometry = new THREE.SphereGeometry( 1, 16, 16);
 		var material = new THREE.MeshLambertMaterial( { color: 0xffff00} );
@@ -402,7 +380,7 @@ The user moves a cube around the board trying to knock balls into a cone
 		return mesh;
 	}
 
-	function createHealthBall(){
+	function createHealthBall() {
 		//var geometry = new THREE.SphereGeometry( 4, 20, 20);
 		var geometry = new THREE.SphereGeometry( 1, 16, 16);
 		var material = new THREE.MeshLambertMaterial( { color: 0x00FF00} );
@@ -413,13 +391,8 @@ The user moves a cube around the board trying to knock balls into a cone
 		return mesh;
 	}
 
-
-
-
-
 	var clock;
-
-	function initControls(){
+	function initControls() {
 		// here is where we create the eventListeners to respond to operations
 
 		  //create a clock for the time-based animation ...
@@ -430,7 +403,7 @@ The user moves a cube around the board trying to knock balls into a cone
 			window.addEventListener( 'keyup',   keyup );
   }
 
-	function keydown(event){
+	function keydown(event) {
 		console.log("Keydown: '"+event.key+"'");
 		//console.dir(event);
 		// first we handle the "play again" key in the "youwon" scene
@@ -481,12 +454,10 @@ The user moves a cube around the board trying to knock balls into a cone
 			case "ArrowRight": avatarCam.translateY(-1);break;
 			case "ArrowUp": avatarCam.translateZ(-1);break;
 			case "ArrowDown": avatarCam.translateZ(1);break;
-
 		}
-
 	}
 
-	function keyup(event){
+	function keyup(event) {
 		//console.log("Keydown:"+event.key);
 		//console.dir(event);
 		switch (event.key){
@@ -504,7 +475,7 @@ The user moves a cube around the board trying to knock balls into a cone
 		}
 	}
 
-	function updateNPC(){
+	function updateNPC() {
 		npc.lookAt(avatar.position);
 	  //npc.__dirtyPosition = true;
 
@@ -521,8 +492,6 @@ The user moves a cube around the board trying to knock balls into a cone
 					// threejs doesn't let us remove it from the schene...
 					controls.npc = true;
 					this.setLinearVelocity(0);
-
-
 				}
 			}
 		)
@@ -537,10 +506,9 @@ The user moves a cube around the board trying to knock balls into a cone
       npc.position.set(randN(30),5,randN(30));
 			npc.setLinearVelocity(npc.getWorldDirection().multiplyScalar(0));
 		}
-
 	}
 
-  function updateAvatar(){
+  function updateAvatar() {
 		"change the avatar's linear or angular velocity based on controls state (set by WSAD key presses)"
 
 		var forward = avatar.getWorldDirection();
@@ -581,17 +549,12 @@ The user moves a cube around the board trying to knock balls into a cone
       avatar.__dirtyPosition = true;
       avatar.position.set(40,10,40);
     }
-
 	}
 
-
-
 	function animate() {
-
 		requestAnimationFrame( animate );
 
 		switch(gameState.scene) {
-
 			case "start":
 				renderer.render(startScene, endCamera);
 				if (controls.start) gameState.scene = 'main';
@@ -615,10 +578,8 @@ The user moves a cube around the board trying to knock balls into a cone
 					renderer.render( scene, gameState.camera );
 				}
 				break;
-
 			default:
 			  console.log("don't know the scene "+gameState.scene);
-
 		}
 
 		//draw heads up display ..
@@ -627,5 +588,4 @@ The user moves a cube around the board trying to knock balls into a cone
     + gameState.score
     + " health="+gameState.health
     + '</div>';
-
 	}
