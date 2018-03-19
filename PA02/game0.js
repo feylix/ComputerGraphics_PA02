@@ -24,9 +24,13 @@ BUGS:
 */
 
 	var scene, renderer;  // all threejs programs need these
+<<<<<<< HEAD
 	var camera, avatarCam, edgeCam, upperCam;  // we have two cameras in the main scene
 	var endScene, endCamera, endText;
 	var loseScene, startScene;
+=======
+	var camera, avatarCam, edgeCam;  // we have two cameras in the main scene
+>>>>>>> parent of 500dec5... Added featrue of key "4" to change upper angel camera
 	var avatar;
 
 	// here are some mesh objects ...
@@ -121,7 +125,6 @@ BUGS:
 
 			// create the avatar
 			avatarCam = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 1000 );
-			upperCam = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 0.1, 1000 );
 			avatar = createAvatar();
 			gameState.camera = avatarCam;
 
@@ -194,7 +197,7 @@ BUGS:
 						this.__dirtyPosition = true;
 					}
 				}
-			)
+			)	
 		}
 	}
 
@@ -338,11 +341,7 @@ BUGS:
 
 						avatarCam.position.set(0,4,0);
 						avatarCam.lookAt(0,4,10);
-						upperCam.position.set(0,6,-6);
-						upperCam.lookAt(0,4,16);
 						avatar.add(avatarCam);
-						avatar.add(upperCam);
-
 						avatar.translateY(10);
 
 						avatarCam.translateY(-4);
@@ -447,7 +446,6 @@ BUGS:
 			case "1": gameState.camera = camera; break;
 			case "2": gameState.camera = avatarCam; break;
       case "3": gameState.camera = edgeCam; break;
-			case "4": gameState.camera = upperCam; break;
 
 			// move the camera around, relative to the avatar
 			case "ArrowLeft": avatarCam.translateY(1);break;
