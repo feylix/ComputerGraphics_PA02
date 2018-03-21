@@ -604,9 +604,18 @@ BUGS:
 		}
 
 		//draw heads up display ..
-	  var info = document.getElementById("info");
+	if(gameState.scene=="start"){
+		  var info = document.getElementById("info");
+			info.innerHTML='<div style="font-size:24pt">Score: '
+	    + gameState.score
+	    + " health="+gameState.health
+			+ '     Press p to play'
+	    + '</div>';
+		}
+	else{
+		var info = document.getElementById("info");
 		info.innerHTML='<div style="font-size:24pt">Score: '
-    + gameState.score
-    + " health="+gameState.health
-    + '</div>';
+		+ gameState.score
+		+ " health="+gameState.health
+		+ '</div>';
 	}
