@@ -157,7 +157,7 @@ BUGS:
 	}
 
 	function addBalls() {
-		var numBalls = 20;
+		var numBalls = 5;
 
 		for(i=0;i<numBalls;i++) {
 			var ball = createBall();
@@ -430,6 +430,7 @@ BUGS:
 		if (gameState.scene == 'youwon' && event.key=='r') {
 			gameState.scene = 'main';
 			gameState.score = 0;
+			gameState.health = 10;
 			addBalls();
 			addHealthBalls();
 			return;
@@ -439,6 +440,7 @@ BUGS:
 			scene = initScene();
 			createMainScene();
 			gameState.health = 11;
+			gameState.score =0;
 			return;
 		}
 
@@ -449,13 +451,14 @@ BUGS:
 			case "s": controls.bwd = true; break;
 			case "a": controls.left = true; break;
 			case "d": controls.right = true; break;
-			case "r": controls.up = true; break;
+			case "r": avatar.rotation.set(0,0,0); avatar.__dirtyRotation=true;
+				console.dir(avatar.rotation); break;
 			case "f": controls.down = true; break;
 			case "m": controls.speed = 30; break;
-      case " ": controls.fly = true;
-          console.log("space!!");
-          break;
-      case "h": controls.reset = true; break;
+      		case " ": controls.fly = true;
+          		console.log("space!!");
+          		break;
+      		case "h": controls.reset = true; break;
 
 			case "q": controls.rleft = true; break;
 			case "e": controls.rright = true; break;
@@ -466,7 +469,7 @@ BUGS:
 			// switch cameras
 			case "1": gameState.camera = camera; break;
 			case "2": gameState.camera = avatarCam; break;
-      case "3": gameState.camera = edgeCam; break;
+      		case "3": gameState.camera = edgeCam; break;
 			case "4": gameState.camera = upperCam; break;
 
 			// move the camera around, relative to the avatar
@@ -488,8 +491,8 @@ BUGS:
 			case "r": controls.up    = false; break;
 			case "f": controls.down  = false; break;
 			case "m": controls.speed = 10; break;
-      case " ": controls.fly = false; break;
-      case "h": controls.reset = false; break;
+      		case " ": controls.fly = false; break;
+      		case "h": controls.reset = false; break;
 			case "q": controls.rleft = false; break;
 			case "e": controls.rright = false; break;
 		}
@@ -518,12 +521,12 @@ BUGS:
 
 		var dis = Math.sqrt(Math.pow((avatar.position.x - npc.position.x),2) + Math.pow((avatar.position.y - npc.position.y),2) + Math.pow((avatar.position.z - npc.position.z),2));
 		if (dis <= 20) {
-			npc.setLinearVelocity(npc.getWorldDirection().multiplyScalar(10));
+			npc.setLinearVelocity(npc.getWorldDirection().multiplyScalar(5));
 		}
 		if (controls.npc) {
 			controls.npc = false;
 			npc.__dirtyPosition = true;
-      npc.position.set(randN(30),5,randN(30));
+      		npc.position.set(randN(30),5,randN(30));
 			npc.setLinearVelocity(npc.getWorldDirection().multiplyScalar(0));
 		}
 	}
@@ -592,8 +595,8 @@ BUGS:
 			case "main":
 				updateAvatar();
 				updateNPC();
-        edgeCam.lookAt(avatar.position);
-	    	scene.simulate();
+        		edgeCam.lookAt(avatar.position);
+	    		scene.simulate();
 				if (gameState.camera!= 'none'){
 					renderer.render( scene, gameState.camera );
 				}
@@ -611,7 +614,15 @@ BUGS:
 	    + " health="+gameState.health
 			+ '     Press p to play'
 	    + '</div>';
-		}
+	}
+	else if(gameState.scene=='youlose' || gameState.scene=='youwon'){
+		var info = document.getElementById("info");
+			info.innerHTML='<div style="font-size:24pt">Score: '
+	    + gameState.score
+	    + " health="+gameState.health
+			+ '     Press r to restart'
+	    + '</div>';
+	}
 	else{
 		var info = document.getElementById("info");
 		info.innerHTML='<div style="font-size:24pt">Score: '
@@ -619,3 +630,4 @@ BUGS:
 		+ " health="+gameState.health
 		+ '</div>';
 	}
+}
