@@ -29,6 +29,7 @@ BUGS:
 	var cone;
 	var torus;
 	var npc;
+	var goldenSnitch; //actually hot pink
 
 	var endScene, endCamera, endText;
 	var loseScene, startScene;
@@ -36,7 +37,7 @@ BUGS:
 	var controls =
 	     {fwd:false, bwd:false, left:false, right:false,
 				speed:10, fly:false, reset:false, rleft:false,
-				rright:false, start:false, hit:false, npc:false,
+				rright:false, start:false, hit:false, npc:false, goldenSnitch:false,
 		    camera:camera}
 
 	var gameState =
@@ -150,6 +151,10 @@ BUGS:
 			scene.add(npc);
 			//console.dir(npc);
 			//playGameMusic();
+
+			goldenSnitch = createSphereMesh();
+			goldenSnitch.position.set(16, 5, -30);
+			scene.add(goldenSnitch);
 	}
 
 	function randN(n) {
@@ -380,6 +385,16 @@ BUGS:
 		return mesh;
 	}
 
+	function createSphereMesh() {
+		var geometry = new THREE.SphereGeometry( 1, 16, 16);
+		var material = new THREE.MeshLambertMaterial( { color: 0xFF69B4} );
+		var pmaterial = new Physijs.createMaterial(material,0.9,0.95);
+			var mesh = new Physijs.BoxMesh( geometry, material );
+		mesh.setDamping(0.1,0.1);
+		mesh.castShadow = true;
+		return mesh;
+	}
+
 	function createTorus(){
 		var geometry = new THREE.TorusGeometry( 75, 3, 16, 100 );
 		var material = new THREE.MeshLambertMaterial( { color: 0xffff00 } );
@@ -469,7 +484,7 @@ BUGS:
 			// switch cameras
 			case "1": gameState.camera = camera; break;
 			case "2": gameState.camera = avatarCam; break;
-      		case "3": gameState.camera = edgeCam; break;
+      	case "3": gameState.camera = edgeCam; break;
 			case "4": gameState.camera = upperCam; break;
 
 			// move the camera around, relative to the avatar
@@ -529,6 +544,36 @@ BUGS:
       		npc.position.set(randN(30),5,randN(30));
 			npc.setLinearVelocity(npc.getWorldDirection().multiplyScalar(0));
 		}
+	}
+
+	function upadateGoldenSnitch() {
+	  goldenSnitch.lookAt(avatar.position);
+
+	  goldenSnitch.addEventListener( 'collision',
+	    function( other_object, relative_velocity, relative_rotation, contact_normal ) {
+	      if (other_object == avatar){
+	        controls.hit = true;
+	        gameState.scene = 'youwon';
+
+	        //scene.remove(ball);  // this isn't working ...
+	        // make the ball drop below the scene ..
+	        // threejs doesn't let us remove it from the schene...
+	        controls.goldenSnitch = true;
+	        this.setLinearVelocity(0);
+	      }
+	    }
+	  )
+
+	  var dis = Math.sqrt(Math.pow((avatar.position.x - goldenSnitch.position.x),2) + Math.pow((avatar.position.y - goldenSnitch.position.y),2) + Math.pow((avatar.position.z - goldenSnitch.position.z),2));
+	  if (dis <= 20) {
+			goldenSnitch.setLinearVelocity(goldenSnitch.getWorldDirection().multiplyScalar(-10));
+	  }
+	  if (controls.goldenSnitch) {
+	    controls.goldenSnitch = false;
+	    goldenSnitch.__dirtyPosition = true;
+	        goldenSnitch.position.set(randN(30),5,randN(30));
+	    goldenSnitch.setLinearVelocity(goldenSnitch.getWorldDirection().multiplyScalar(0));
+	  }
 	}
 
   function updateAvatar() {
@@ -594,6 +639,7 @@ BUGS:
 
 			case "main":
 				updateAvatar();
+				upadateGoldenSnitch();
 				updateNPC();
         		edgeCam.lookAt(avatar.position);
 	    		scene.simulate();
