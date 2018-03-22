@@ -18,7 +18,6 @@ PA02: Work with your team to modify the game0 demo from class and
 				- Each member of the team should also add at least one additional feature
 					to the game
 BUGS:
-
 */
 
 	var scene, renderer;  // all threejs programs need these
@@ -454,7 +453,7 @@ BUGS:
 			gameState.scene = 'main';
 			scene = initScene();
 			createMainScene();
-			gameState.health = 11;
+			gameState.health = 10;
 			gameState.score =0;
 			return;
 		}
