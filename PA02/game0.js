@@ -1,7 +1,7 @@
 /*
 Team: This Variable is yet to be Declared
 Members: Daniel Johnston, Benedikt Reynolds, Rebecca Panitch,
-		Marcus Lee, Eva Luo, Zepeng Hu
+		Marcus Lee, Zepeng Hu
 PA02: Work with your team to modify the game0 demo from class and
 		make the following changes:
 				- Add key controls "Q" and "E" to rotate the avatar camera view to the
