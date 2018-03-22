@@ -138,6 +138,7 @@ BUGS:
 
 			addBalls();
 			addHealthBalls();
+			addDeathBalls();
 
 			cone = createConeMesh(4,6);
 			cone.position.set(10,3,7);
@@ -214,6 +215,33 @@ BUGS:
 						//drop below scene
 						this.position.y = this.position.y - 100;
 						this.__dirtyPosition = true;
+					}
+				}
+			)
+		}
+	}
+
+	function addDeathBalls() {
+		//creates spheres that increase health of avatar when they collide with avatar
+		var numBalls = 2;
+
+		for(i=0;i<numBalls;i++) {
+			var ball = createDeathBall();
+			ball.position.set(randN(20)+15,30,randN(20)+15);
+			scene.add(ball);
+
+			ball.addEventListener( 'collision',
+				function( other_object, relative_velocity, relative_rotation, contact_normal ) {
+					if (other_object==avatar){
+						console.log("avatar hit death ball (you lose!)");
+						soundEffect('bad.wav');
+						if(gameState.health>5){
+							gameState.health -=5;
+						}
+						else{
+							gameState.health =0;
+							gameState.scene = 'youlose';
+						}
 					}
 				}
 			)
@@ -433,6 +461,16 @@ BUGS:
 		return mesh;
 	}
 
+	function createDeathBall(){
+		var geometry = new THREE.SphereGeometry( 1, 16, 16);
+		var material = new THREE.MeshLambertMaterial( { color: 0xff0000} );
+		var pmaterial = new Physijs.createMaterial(material,0.9,0.95);
+    	var mesh = new Physijs.BoxMesh( geometry, material );
+		mesh.setDamping(0.1,0.1);
+		mesh.castShadow = true;
+		return mesh;
+	}
+
 	var clock;
 	function initControls() {
 		// here is where we create the eventListeners to respond to operations
@@ -455,6 +493,7 @@ BUGS:
 			gameState.health = 10;
 			addBalls();
 			addHealthBalls();
+			addDeathBalls();
 			return;
 		}
 		if (gameState.scene == 'youlose' && event.key=='r') {
