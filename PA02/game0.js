@@ -490,7 +490,7 @@ BUGS:
 		if (gameState.scene == 'youwon' && event.key=='r') {
 			gameState.scene = 'main';
 			gameState.score = 0;
-			gameState.health = 10;
+			gameState.health = 11;
 			addBalls();
 			addHealthBalls();
 			addDeathBalls();
@@ -500,7 +500,7 @@ BUGS:
 			gameState.scene = 'main';
 			scene = initScene();
 			createMainScene();
-			gameState.health = 10;
+			gameState.health = 11;
 			gameState.score =0;
 			return;
 		}
@@ -612,7 +612,7 @@ BUGS:
 
 	  var dis = Math.sqrt(Math.pow((avatar.position.x - goldenSnitch.position.x),2) + Math.pow((avatar.position.y - goldenSnitch.position.y),2) + Math.pow((avatar.position.z - goldenSnitch.position.z),2));
 	  if (dis <= 20) {
-			goldenSnitch.setLinearVelocity(goldenSnitch.getWorldDirection().multiplyScalar(-10));
+			goldenSnitch.setLinearVelocity(goldenSnitch.getWorldDirection().multiplyScalar(-5));
 			if(randN(30)<10){
 				goldenSnitch.position.z += 10;
 				goldenSnitch.__dirtyPosition = true;
