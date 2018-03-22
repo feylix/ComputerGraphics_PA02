@@ -613,6 +613,11 @@ BUGS:
 	  var dis = Math.sqrt(Math.pow((avatar.position.x - goldenSnitch.position.x),2) + Math.pow((avatar.position.y - goldenSnitch.position.y),2) + Math.pow((avatar.position.z - goldenSnitch.position.z),2));
 	  if (dis <= 20) {
 			goldenSnitch.setLinearVelocity(goldenSnitch.getWorldDirection().multiplyScalar(-10));
+			if(randN(30)<10){
+				goldenSnitch.position.z += 10;
+				goldenSnitch.__dirtyPosition = true;
+			}
+			console.log(randN(30));
 	  }
 	  if (controls.goldenSnitch) {
 	    controls.goldenSnitch = false;
