@@ -490,7 +490,7 @@ BUGS:
 		if (gameState.scene == 'youwon' && event.key=='r') {
 			gameState.scene = 'main';
 			gameState.score = 0;
-			gameState.health = 11;
+			gameState.health = 10;
 			addBalls();
 			addHealthBalls();
 			addDeathBalls();
@@ -500,7 +500,7 @@ BUGS:
 			gameState.scene = 'main';
 			scene = initScene();
 			createMainScene();
-			gameState.health = 11;
+			gameState.health = 10;
 			gameState.score =0;
 			return;
 		}
